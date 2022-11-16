@@ -150,7 +150,19 @@ app.get('/logout', (req, res,) => {
 
 });
 
-//Todo: agregar propuesta
+//Todo: agregar mascota && agregar propuesta
+app.post('/propuesta', (req, res) =>{
+    //? Mascota
+    const nombre = req.body.nombre;
+    const sexo = req.body.sexo;
+    const esterilizado = req.body.esterilizado;
+    const edad = req.body.edad;
+    const descripcion = req.body.descripcion;
+    const foto = "https://ichef.bbci.co.uk/news/640/cpsprodpb/15665/production/_107435678_perro1.jpg";    //? Propuesta
+
+
+})
+
 //Todo: ver propuestas
 //Todo: ver propuesta unica
 //Todo: mandar pqrs
