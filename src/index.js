@@ -39,3 +39,121 @@ app.use(
         }
     })
 )
+const db = mysql.createConnection({
+    user: "root",
+    host: "containers-us-west-96.railway.app",
+    port: 7803,
+    password: "7kj4n2A50smwrg4d5lr3",
+    database: "railway",
+});
+
+db.connect(function (err) {
+    if (err) throw err;
+    console.log("Connected!");
+});
+
+
+//* Registrar
+app.post('/registrar', (req, res) => {
+    
+    const correo = req.body.correo;
+    const contra = req.body.contra;
+    const nombres = req.body.nombres;
+    const apellidos = req.body.apellidos;
+    const celular = req.body.celular;
+    const role = "Usuario";
+    
+    if (nombres == '' || celular == '' || correo == '' || contra == '' || apellidos == '') {
+        res.send({ message: 'Por favor, completar todos los campos!!' });
+    } else {
+        
+        bcrypt.hash(contra, saltRounds, (err, hash) => {
+            
+            if (err) {
+                console.log(err);
+            }
+            
+            db.query("INSERT INTO Usuario ( Nombres, Apellidos, Correo, Contraseña,Celular, Role) VALUES (?,?,?,?,?,?)",
+            [nombres, apellidos, correo, hash, celular, role],
+            (err, result) => {
+                if (err) {
+                        if (err.code == "ER_DUP_ENTRY") {
+                            res.send({ err: err, message: "Correo electronico no disponible" })
+                        }
+                        else {
+                            res.send({ err: err, message: err.message })
+                        }
+                    }
+                    
+                    res.send(result);
+                    
+                });
+            })
+
+    }
+    
+
+});
+
+
+//* LOGIN
+app.post('/login', (req, res) => {
+
+    const correo = req.body.correo;
+    const contra = req.body.contra;
+    console.log(correo,contra);
+    if (correo == '' || contra == '') {
+        res.send({
+            message: "Por favor, completar todos los campos!!"
+        });
+    } else {
+        db.query("SELECT * FROM Usuario WHERE Correo = ?",
+            [correo],
+            (err, result) => {
+                if (err) {
+                    res.send({ err: err })
+                }
+                else if (result.length > 0) {
+                    bcrypt.compare(contra, result[0].Contraseña, (err, response) => {
+                        if (response) {
+                            req.session.user = result;
+                            res.send(result)
+                        } else {
+                            res.send({
+                                message: "Usuario o Contraseña incorrectos!"
+                            });
+                        }
+                    })
+                } else {
+                    res.send({
+                        message: "Usuario no existe!"
+                    });
+                }
+
+            });
+    }
+});
+
+//* Verificar conexion
+app.get('/login', (req, res) => {
+    if (req.session.user) {
+        res.send({ loggedIn: true, user: req.session.user })
+    } else {
+        res.send({ loggedIn: false });
+    }
+
+});
+//* Cerrar Sesion (logout)
+app.get('/logout', (req, res,) => {
+    req.session.destroy((err) => {
+        res.clearCookie("userId").send({ message: "Sesión eliminada" });
+    });
+
+});
+
+
+
+
+app.listen(PORT, () => {
+    console.log("running server on port", PORT);
+});
