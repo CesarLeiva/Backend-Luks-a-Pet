@@ -150,6 +150,14 @@ app.get('/logout', (req, res,) => {
 
 });
 
+//Todo: agregar propuesta
+//Todo: ver propuestas
+//Todo: ver propuesta unica
+//Todo: mandar pqrs
+//Todo: ver propuestas hecha por una persona
+//Todo: ver pqrs
+
+
 
 
 
