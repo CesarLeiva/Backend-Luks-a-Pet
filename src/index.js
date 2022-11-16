@@ -158,7 +158,20 @@ app.post('/propuesta', (req, res) =>{
     const esterilizado = req.body.esterilizado;
     const edad = req.body.edad;
     const descripcion = req.body.descripcion;
-    const foto = "https://ichef.bbci.co.uk/news/640/cpsprodpb/15665/production/_107435678_perro1.jpg";    //? Propuesta
+    const foto = "https://ichef.bbci.co.uk/news/640/cpsprodpb/15665/production/_107435678_perro1.jpg";   
+    
+    db.query("INSERT INTO Mascota ( Nombre, Sexo, Esterilizado, Edad,Descripcion, Foto) VALUES (?,?,?,?,?,?)",
+    [nombre, sexo, esterilizado, edad, descripcion, foto],
+    (err, result) => {
+        if (err) {
+               console.log(err);
+            }
+            
+            res.send(result);
+            
+        });
+    
+    //? Propuesta
 
 
 })
