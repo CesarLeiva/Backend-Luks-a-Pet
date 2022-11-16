@@ -17,7 +17,7 @@ const app = express();
 
 app.use(express.json());
 app.use(cors({
-    origin: ["http://localhost:5500"],
+    origin: ["http://127.0.0.1:5500"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
 }
@@ -98,10 +98,8 @@ app.post('/registrar', (req, res) => {
 
 //* LOGIN
 app.post('/login', (req, res) => {
-
     const correo = req.body.correo;
     const contra = req.body.contra;
-    console.log(correo,contra);
     if (correo == '' || contra == '') {
         res.send({
             message: "Por favor, completar todos los campos!!"
@@ -143,6 +141,7 @@ app.get('/login', (req, res) => {
     }
 
 });
+
 //* Cerrar Sesion (logout)
 app.get('/logout', (req, res,) => {
     req.session.destroy((err) => {
