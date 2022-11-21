@@ -308,7 +308,7 @@ app.get('/reportes/:id', (req, res) => {
 
 app.get('/admin/reportes', (req, res) => {
 
-    db.query("SELECT * from ReporteAdopcion",
+    db.query("SELECT ReporteAdopcion.*, Mascota.* from ReporteAdopcion INNER JOIN Mascota ON ReporteAdopcion.IdMascota = Mascota.IdMascota ",
         (err, result) => {
             if (err) {
                 res.send({ err: err })
