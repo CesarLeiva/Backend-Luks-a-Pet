@@ -151,7 +151,7 @@ app.get('/logout', (req, res,) => {
 
 });
 
-//? Probar: agregar mascota && agregar propuesta
+//* Probar: agregar mascota && agregar propuesta
 app.post('/propuesta', (req, res) => {
     //? Mascota
     const nombre = req.body.nombre;
@@ -202,7 +202,7 @@ app.post('/propuesta', (req, res) => {
 
 app.get('/propuestas', (req, res) => {
 
-    db.query("SELECT PropuestaAdopcion.*, Mascota.* from PropuestaAdopcion Inner join Mascota on PropuestaAdopcion.IdMascota = Mascota.IdMascota",
+    db.query("SELECT PropuestaAdopcion.*, Mascota.* from PropuestaAdopcion Inner join Mascota on PropuestaAdopcion.IdMascota = Mascota.IdMascota where Adoptado = false",
         (err, result) => {
             if (err) {
                 res.send({ err: err })
@@ -286,7 +286,9 @@ app.delete('/propuesta/:id', (req, res) => {
 
 //* ver Reportes
 
-app.get('/reportes', (req, res) => {
+app.get('/reportes/:id', (req, res) => {
+
+    const usuarioId = req.params.id;
 
     db.query("SELECT * from ReporteAdopcion",
         (err, result) => {
@@ -301,6 +303,57 @@ app.get('/reportes', (req, res) => {
                 });
             }
 
+        });
+});
+
+app.get('/admin/reportes', (req, res) => {
+
+    db.query("SELECT * from ReporteAdopcion",
+        (err, result) => {
+            if (err) {
+                res.send({ err: err })
+            }
+            if (result.length > 0) {
+                res.send(result);
+            } else {
+                res.send({
+                    message: "No hay reportes"
+                });
+            }
+
+        });
+});
+
+
+app.post('/reporte', (req, res) => {
+
+    const nombres = req.body.nombres;
+    const apellidos = req.body.apellidos;
+    const celular = req.body.celular;
+    const identificacion = req.body.identificacion;
+    const idPropuesta = req.body.idPropuesta;
+
+    db.query("INSERT INTO ReporteAdopcion (IdPropuesta,IdAdoptante,Nombre,Apellido,Celular) values (?,?,?,?,?)", [idPropuesta, identificacion, nombres, apellidos, celular],
+        (err, result) => {
+            console.log(result)
+            if (err) {
+                res.send({ err: err })
+            }
+            else {
+                db.query("UPDATE PropuestaAdopcion SET Adoptado = true WHERE IdPropuesta = ?", [idPropuesta],
+                    (err, result) => {
+                        console.log(result)
+                        if (err) {
+                            res.send({ err: err })
+                        } else {
+                            res.send({
+                                message: "Se ha realizo el reporte"
+                            });
+                        }
+                    })
+
+
+            }
         });
 });
 
