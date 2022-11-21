@@ -308,7 +308,7 @@ app.get('/reportes/:id', (req, res) => {
 
 app.get('/admin/reportes', (req, res) => {
 
-    db.query("SELECT ReporteAdopcion.*, PropuestaAdopcion.* from ReporteAdopcion INNER JOIN PropuestaAdopcion ON ReporteAdopcion.IdPropuesta = PropuestaAdopcion IdPropuesta inner join Mascota on PropuestaAdopcion.IdMascota = Mascota.IdMascota",
+    db.query("SELECT ReporteAdopcion.*, PropuestaAdopcion.*, Mascota.* from ReporteAdopcion INNER JOIN PropuestaAdopcion ON ReporteAdopcion.IdPropuesta = PropuestaAdopcion.IdPropuesta inner join Mascota on PropuestaAdopcion.IdMascota = Mascota.IdMascota;",
         (err, result) => {
             if (err) {
                 res.send({ err: err })
